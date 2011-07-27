@@ -1,0 +1,32 @@
+{
+  "name": "Hangout Auto Retry Try Again",
+  "version": "0.0.1",
+  "description": "Tired of clicking the try again button for Hangouts? Then install this :)",
+  "icons": {
+    "16": "img/icon16.png",
+    "32": "img/icon32.png",
+    "48": "img/icon48.png",
+    "128": "img/icon128.png"
+  },
+  "permissions": [
+    "tabs"
+  ],
+  "options_page": "options.html",
+  "background_page": "background.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://talkgadget.google.com/hangouts/*"
+       ],
+      "css": [
+        "css/hangout.css"
+      ],
+      "js": [
+        "js/base.js",
+        "js/hangout_injection.js"
+      ],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ]
+}
