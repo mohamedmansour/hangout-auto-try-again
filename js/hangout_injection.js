@@ -8,7 +8,7 @@
 HangoutInjection = function() {
   this.hangoutButtonBarID = '.hangout-greenroom-buttonbar';
   this.tryagainButtonID = ':o9'; // TODO: instead of relying on an ID, search for "Try Again"
-  this.retryDelay = 2000;
+  this.retryDelay = 5000;
 };
 
 /**

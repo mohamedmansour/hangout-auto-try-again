@@ -18,7 +18,12 @@ settings = {
   },
   get retry_delay() {
     var key = localStorage['retry_delay'];
-    return (typeof key == 'undefined') ? 2000 : parseInt(key);
+    var delay = (typeof key == 'undefined') ? 5000 : parseInt(key);
+    if (delay < 5000) {
+      delay = 5000;
+      localStorage['retry_delay'] = 5000;
+    }
+    return delay;
   },
   set retry_delay(val) {
     localStorage['retry_delay'] = val;
