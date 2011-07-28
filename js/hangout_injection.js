@@ -7,6 +7,7 @@
  */
 HangoutInjection = function() {
   this.hangoutButtonBarID = '.hangout-greenroom-buttonbar';
+  this.tryagainButtonID = ':o9'; // TODO: instead of relying on an ID, search for "Try Again"
   this.retryDelay = 2000;
 };
 
@@ -41,9 +42,10 @@ HangoutInjection.prototype.onExtensionRequest = function(request, sender, sendRe
  */
 HangoutInjection.prototype.renderAutoButton = function() {
   var hangoutButtonBar = document.querySelector(this.hangoutButtonBarID);
-  var hangoutButton = $(':of');
+  var hangoutButton = $(this.tryagainButtonID);
   if (hangoutButton) {
     var autoRetry = hangoutButton.cloneNode(true);
+    autoRetry.id = ':oauto';
     autoRetry.innerHTML = 'Attempt Auto-Retry?';
     autoRetry.addEventListener('click', this.onAutoRetryClick.bind(this), false);
     hangoutButtonBar.appendChild(autoRetry);
@@ -87,7 +89,7 @@ HangoutInjection.prototype.simulateClick = function(element) {
  * Auto click a specific div.
  */
 HangoutInjection.prototype.autoClick = function() {
-  var tryButton = document.getElementById(':oa');
+  var tryButton = document.getElementById(this.tryagainButtonID);
   if (tryButton) {
      this.simulateClick(tryButton);
      setTimeout(this.autoClick.bind(this), this.retryDelay);
