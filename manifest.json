@@ -1,6 +1,6 @@
 {
-  "name": "Hangout Auto Retry Try Again",
-  "version": "0.0.1",
+  "name": "Hangout Auto Try Again for Google Plus",
+  "version": "0.0.2",
   "description": "Tired of clicking the try again button for Hangouts? Then install this :)",
   "icons": {
     "16": "img/icon16.png",
