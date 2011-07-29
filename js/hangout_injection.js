@@ -7,7 +7,7 @@
  */
 HangoutInjection = function() {
   this.hangoutButtonBarID = '.hangout-greenroom-buttonbar';
-  this.tryagainButtonID = ':o9'; // TODO: instead of relying on an ID, search for "Try Again"
+  this.tryagainButtonID = ':oa'; // TODO: instead of relying on an ID, search for "Try Again"
   this.retryDelay = 5000;
 };
 
@@ -89,7 +89,7 @@ HangoutInjection.prototype.simulateClick = function(element) {
  * Auto click a specific div.
  */
 HangoutInjection.prototype.autoClick = function() {
-  var tryButton = document.getElementById(this.tryagainButtonID);
+  var tryButton = $(this.tryagainButtonID);
   if (tryButton) {
      this.simulateClick(tryButton);
      setTimeout(this.autoClick.bind(this), this.retryDelay);
