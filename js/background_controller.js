@@ -30,19 +30,6 @@ BackgroundController.prototype.versionCheck = function() {
  * Triggered when the extension just installed.
  */
 BackgroundController.prototype.onInstall = function() {
-  // Inject the content script to all opened window.
-  chrome.windows.getAll({ populate: true }, function(windows) {
-    for (var w = 0; w < windows.length; w++) {
-      var tabs = windows[w].tabs;
-      for (var t = 0; t < tabs.length; t++) {
-        var tab = tabs[t];
-        var url = tab.url;
-        if (url.indexOf('https://talkgadget.google.com/hangouts') == 0) { 
-          chrome.tabs.executeScript(tab.id, { file: '/js/hangout_injection.js' });
-        }
-      }
-    }
-  });
 };
 
 /**

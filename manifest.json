@@ -1,6 +1,6 @@
 {
   "name": "Hangout Auto Try Again for Google Plus",
-  "version": "0.0.3.1",
+  "version": "0.1",
   "description": "Tired of clicking the try again button for Hangouts? Then install this :)",
   "icons": {
     "16": "img/icon16.png",
@@ -8,9 +8,6 @@
     "48": "img/icon48.png",
     "128": "img/icon128.png"
   },
-  "permissions": [
-    "tabs"
-  ],
   "options_page": "options.html",
   "background_page": "background.html",
   "content_scripts": [
