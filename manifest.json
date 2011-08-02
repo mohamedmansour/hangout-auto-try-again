@@ -1,6 +1,6 @@
 {
   "name": "Hangout Auto Try Again for Google Plus",
-  "version": "0.1",
+  "version": "0.1.1",
   "description": "Tired of clicking the try again button for Hangouts? Then install this :)",
   "icons": {
     "16": "img/icon16.png",

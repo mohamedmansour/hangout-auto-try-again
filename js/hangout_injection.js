@@ -8,6 +8,7 @@
 HangoutInjection = function() {
   this.hangoutButtonBarID = '.hangout-greenroom-buttonbar';
   this.tryagainButtonID = ':oa'; // TODO: instead of relying on an ID, search for "Try Again"
+  this.tryagainAlternateButtonID = ':o9';
   this.retryDelay = 5000;
 };
 
@@ -43,6 +44,9 @@ HangoutInjection.prototype.onExtensionRequest = function(request, sender, sendRe
 HangoutInjection.prototype.renderAutoButton = function() {
   var hangoutButtonBar = document.querySelector(this.hangoutButtonBarID);
   var hangoutButton = $(this.tryagainButtonID);
+  if (hangoutButton && hangoutButton.innerText != 'Try again') {
+    hangoutButton = $(this.tryagainAlternateButtonID);
+  }
   if (hangoutButton) {
     var autoRetry = hangoutButton.cloneNode(true);
     autoRetry.id = ':oauto';
@@ -90,6 +94,9 @@ HangoutInjection.prototype.simulateClick = function(element) {
  */
 HangoutInjection.prototype.autoClick = function() {
   var tryButton = $(this.tryagainButtonID);
+  if (tryButton && tryButton.innerText != 'Try again') {
+    tryButton = $(this.tryagainAlternateButtonID);
+  }
   if (tryButton) {
      this.simulateClick(tryButton);
      setTimeout(this.autoClick.bind(this), this.retryDelay);
