@@ -9,7 +9,9 @@ HangoutInjection = function() {
   this.hangoutButtonBarID = '.hangout-greenroom-buttonbar';
   this.tryagainButtonID = ':oa'; // TODO: instead of relying on an ID, search for "Try Again"
   this.tryagainAlternateButtonID = ':o9';
-  this.retryDelay = 5000;
+  this.retryTryAgainDelay = 5000;
+  this.retryRenderDelay = 1000;
+  this.timeoutHandle = null;
 };
 
 /**
@@ -19,7 +21,7 @@ HangoutInjection.prototype.init = function() {
   chrome.extension.sendRequest({method: 'GetRetryDelay'},
       this.onRetryDelayReceived.bind(this));
   chrome.extension.onRequest.addListener(this.onExtensionRequest.bind(this));
-  setTimeout(this.renderAutoButton.bind(this), 10000);
+  this.timeoutHandle = setTimeout(this.renderAutoButton.bind(this), this.retryRenderDelay);
 };
 
 /**
@@ -47,12 +49,16 @@ HangoutInjection.prototype.renderAutoButton = function() {
   if (hangoutButton && hangoutButton.innerText != 'Try again') {
     hangoutButton = $(this.tryagainAlternateButtonID);
   }
-  if (hangoutButton) {
+  if (hangoutButton && hangoutButton.style.display != 'none') {
     var autoRetry = hangoutButton.cloneNode(true);
     autoRetry.id = ':oauto';
     autoRetry.innerHTML = 'Attempt Auto-Retry?';
     autoRetry.addEventListener('click', this.onAutoRetryClick.bind(this), false);
     hangoutButtonBar.appendChild(autoRetry);
+    clearTimeout(this.timeoutHandle);
+  }
+  else { // Retry renderer
+    this.timeoutHandle = setTimeout(this.renderAutoButton.bind(this), this.retryRenderDelay);
   }
 };
 
@@ -68,7 +74,7 @@ HangoutInjection.prototype.onAutoRetryClick = function(e) {
  * @param {object} response The response packet.
  */
 HangoutInjection.prototype.onRetryDelayReceived = function(response) {
-  this.retryDelay = response.data;
+  this.retryTryAgainDelay = response.data;
 };
 
 /**
@@ -99,7 +105,7 @@ HangoutInjection.prototype.autoClick = function() {
   }
   if (tryButton) {
      this.simulateClick(tryButton);
-     setTimeout(this.autoClick.bind(this), this.retryDelay);
+     setTimeout(this.autoClick.bind(this), this.retryTryAgainDelay);
   }
 };
 
