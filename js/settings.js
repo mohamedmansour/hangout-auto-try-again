@@ -28,4 +28,11 @@ settings = {
   set retry_delay(val) {
     localStorage['retry_delay'] = val;
   },
+  get chat_sound() {
+    var key = localStorage['chat_sound'];
+    return (typeof key == 'undefined') ? true : key === 'true';
+  },
+  set chat_sound(val) {
+    localStorage['chat_sound'] = val;
+  },
 };

@@ -36,6 +36,7 @@ function onSave() {
   // Save settings.
   bkg.settings.opt_out = $('opt_out').checked;
   bkg.settings.retry_delay = $('retry_delay').value;
+  bkg.settings.chat_sound = $('chat_sound').checked;
 
   // Update status to let user know options were saved.
   var info = $('info-message');
@@ -54,6 +55,7 @@ function onRestore() {
   $('version').innerHTML = ' (v' + bkg.settings.version + ')';
   $('opt_out').checked = bkg.settings.opt_out;
   $('retry_delay').value = bkg.settings.retry_delay;
+  $('chat_sound').checked = bkg.settings.chat_sound;
 }
 
 

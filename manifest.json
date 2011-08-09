@@ -12,16 +12,15 @@
   "background_page": "background.html",
   "content_scripts": [
     {
-      "matches": [
-        "https://talkgadget.google.com/hangouts/*"
-       ],
-      "css": [
-        "css/hangout.css"
-      ],
-      "js": [
-        "js/base.js",
-        "js/hangout_injection.js"
-      ],
+      "matches": [ "https://talkgadget.google.com/hangouts/*" ],
+      "css": [ "css/hangout.css" ],
+      "js": [ "js/base.js", "js/hangout_injection.js" ],
+      "run_at": "document_end",
+      "all_frames": true
+    },
+    {
+      "matches": [ "https://talkgadget.google.com/talkgadget/hangoutsapp*" ],
+      "js": [ "js/sound_injection.js" ],
       "run_at": "document_end",
       "all_frames": true
     }
