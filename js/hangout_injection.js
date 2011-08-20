@@ -7,21 +7,19 @@
  */
 HangoutInjection = function() {
   this.hangoutButtonBarID = '.hangout-greenroom-buttonbar';
-  this.tryagainButtonID = ':oa'; // TODO: instead of relying on an ID, search for "Try Again"
-  this.tryagainAlternateButtonID = ':o9';
   this.retryTryAgainDelay = 5000;
   this.retryRenderDelay = 1000;
-  this.timeoutHandle = null;
+  this.timeoutHandleRenderer = null;
+  this.timeoutHandleClick = null;
 };
 
 /**
  * Initializes the autoclick feature.
  */
 HangoutInjection.prototype.init = function() {
-  chrome.extension.sendRequest({method: 'GetRetryDelay'},
-      this.onRetryDelayReceived.bind(this));
+  chrome.extension.sendRequest({method: 'GetRetryDelay'}, this.onRetryDelayReceived.bind(this));
   chrome.extension.onRequest.addListener(this.onExtensionRequest.bind(this));
-  this.timeoutHandle = setTimeout(this.renderAutoButton.bind(this), this.retryRenderDelay);
+  this.timeoutHandleRenderer = setTimeout(this.renderAutoButton.bind(this), this.retryRenderDelay);
 };
 
 /**
@@ -40,25 +38,36 @@ HangoutInjection.prototype.onExtensionRequest = function(request, sender, sendRe
   sendResponse({});
 };
 
+HangoutInjection.prototype.findHangoutButton = function(buttonName) {
+  var hangoutButtonBar = document.querySelector(this.hangoutButtonBarID);
+  if (hangoutButtonBar) {
+    var hangoutButtons = hangoutButtonBar.childNodes;
+    for (var i = 0; i < hangoutButtons.length; i++) {
+      var hangoutButton = hangoutButtons[i];
+      if (hangoutButton.style.display != 'none' && hangoutButton.innerHTML == buttonName) {
+        return hangoutButton;
+      }
+    }
+  }
+  return null;
+};
+
 /**
  * Auto retry again button renderer.
  */
 HangoutInjection.prototype.renderAutoButton = function() {
-  var hangoutButtonBar = document.querySelector(this.hangoutButtonBarID);
-  var hangoutButton = $(this.tryagainButtonID);
-  if (hangoutButton && hangoutButton.innerText != 'Try again') {
-    hangoutButton = $(this.tryagainAlternateButtonID);
-  }
-  if (hangoutButton && hangoutButton.style.display != 'none') {
+  // Try to find the "Try Again" button.
+  var hangoutButton = this.findHangoutButton('Try again');
+  if (hangoutButton) {
     var autoRetry = hangoutButton.cloneNode(true);
     autoRetry.id = ':oauto';
     autoRetry.innerHTML = 'Attempt Auto-Retry?';
     autoRetry.addEventListener('click', this.onAutoRetryClick.bind(this), false);
-    hangoutButtonBar.appendChild(autoRetry);
-    clearTimeout(this.timeoutHandle);
+    hangoutButton.parentNode.appendChild(autoRetry);
+    clearTimeout(this.timeoutHandleRenderer);
   }
   else { // Retry renderer
-    this.timeoutHandle = setTimeout(this.renderAutoButton.bind(this), this.retryRenderDelay);
+    this.timeoutHandleRenderer = setTimeout(this.renderAutoButton.bind(this), this.retryRenderDelay);
   }
 };
 
@@ -99,13 +108,10 @@ HangoutInjection.prototype.simulateClick = function(element) {
  * Auto click a specific div.
  */
 HangoutInjection.prototype.autoClick = function() {
-  var tryButton = $(this.tryagainButtonID);
-  if (tryButton && tryButton.innerText != 'Try again') {
-    tryButton = $(this.tryagainAlternateButtonID);
-  }
+  var tryButton = document.getElementById(':oauto');
   if (tryButton) {
      this.simulateClick(tryButton);
-     setTimeout(this.autoClick.bind(this), this.retryTryAgainDelay);
+     this.timeoutHandleClick = setTimeout(this.autoClick.bind(this), this.retryTryAgainDelay);
   }
 };
 
