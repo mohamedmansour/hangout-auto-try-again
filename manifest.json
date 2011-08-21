@@ -20,7 +20,7 @@
       ],
       "js": [
         "js/base.js",
-        "js/hangout_injection.js"
+        "js/hangout_auto_try_injection.js"
       ],
       "run_at": "document_end",
       "all_frames": true
