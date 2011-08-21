@@ -8,8 +8,8 @@
 HangoutInjection = function() {
   this.hangoutButtonBarID = '.hangout-greenroom-buttonbar';
   this.hangoutMessageID = '.hangout-greenroom-message';
-  this.retryTryAgainDelay = 5000;
-  this.retryRenderDelay = 1000;
+  this.hangoutTitleID = '.hangout-greenroom-title';
+  this.retryDelay = 1000;
   this.timeoutHandleRenderer = null;
   this.timeoutHandleClick = null;
   this.tryAgainButton = null;
@@ -19,27 +19,14 @@ HangoutInjection = function() {
  * Initializes the autoclick feature.
  */
 HangoutInjection.prototype.init = function() {
-  chrome.extension.sendRequest({method: 'GetRetryDelay'}, this.onRetryDelayReceived.bind(this));
-  chrome.extension.onRequest.addListener(this.onExtensionRequest.bind(this));
-  this.timeoutHandleRenderer = setTimeout(this.renderAutoButton.bind(this), this.retryRenderDelay);
+  this.timeoutHandleRenderer = setTimeout(this.renderAutoButton.bind(this), this.retryDelay);
 };
 
 /**
- * Listen for some requests coming from the extension.
+ * Find the hangout button given the name on the navigation bar. This will do some autodiscovery.
  *
- * @param {Object} request The request sent by the calling script.
- * @param {Object<MessageSender>} sender The location where the script has spawned.
- * @param {Function} request Function to call when you have a response. The 
-                              argument should be any JSON-ifiable object, or
-                              undefined if there is no response.
+ * @param {string} buttonName The button to find on the bar.
  */
-HangoutInjection.prototype.onExtensionRequest = function(request, sender, sendResponse) {
-  if (request.method == 'UpdateDelay') {
-    this.onRetryDelayReceived(request);
-  }
-  sendResponse({});
-};
-
 HangoutInjection.prototype.findHangoutButton = function(buttonName) {
   var hangoutButtonBar = document.querySelector(this.hangoutButtonBarID);
   if (hangoutButtonBar) {
@@ -66,10 +53,15 @@ HangoutInjection.prototype.renderAutoButton = function() {
     autoRetry.innerHTML = 'Attempt Auto-Retry?';
     autoRetry.addEventListener('click', this.onAutoRetryClick.bind(this), false);
     this.tryAgainButton.parentNode.appendChild(autoRetry);
+    
+    var developedBy = document.createElement('div');
+    developedBy.style = 'color: red; font-size: 0.8em';
+    developedBy.innerHTML = 'Developed by <a target="_blank" href="https://plus.google.com/116805285176805120365/about">+Mohamed Mansour</a>!';
+    document.querySelector(this.hangoutTitleID).appendChild(developedBy);
     clearTimeout(this.timeoutHandleRenderer);
   }
-  else { // Retry renderer
-    this.timeoutHandleRenderer = setTimeout(this.renderAutoButton.bind(this), this.retryRenderDelay);
+  else { // Retry renderer.
+    this.timeoutHandleRenderer = setTimeout(this.renderAutoButton.bind(this), this.retryDelay);
   }
 };
 
@@ -111,7 +103,7 @@ HangoutInjection.prototype.autoClick = function(e) {
   if (!this.isJoining()) {
     this.simulateClick(this.tryAgainButton);
   }
-  this.timeoutHandleClick = setTimeout(this.autoClick.bind(this), 1000);
+  this.timeoutHandleClick = setTimeout(this.autoClick.bind(this), this.retryDelay);
 };
 
 /**

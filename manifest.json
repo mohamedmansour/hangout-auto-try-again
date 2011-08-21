@@ -1,6 +1,6 @@
 {
   "name": "Hangout Auto Try Again for Google Plus",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Tired of clicking the try again button for Hangouts? Then install this :)",
   "icons": {
     "16": "img/icon16.png",
@@ -8,7 +8,6 @@
     "48": "img/icon48.png",
     "128": "img/icon128.png"
   },
-  "options_page": "options.html",
   "background_page": "background.html",
   "content_scripts": [
     {
@@ -19,7 +18,6 @@
         "css/hangout.css"
       ],
       "js": [
-        "js/base.js",
         "js/hangout_auto_try_injection.js"
       ],
       "run_at": "document_end",
