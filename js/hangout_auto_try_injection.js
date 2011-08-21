@@ -7,10 +7,12 @@
  */
 HangoutInjection = function() {
   this.hangoutButtonBarID = '.hangout-greenroom-buttonbar';
+  this.hangoutMessageID = '.hangout-greenroom-message';
   this.retryTryAgainDelay = 5000;
   this.retryRenderDelay = 1000;
   this.timeoutHandleRenderer = null;
   this.timeoutHandleClick = null;
+  this.tryAgainButton = null;
 };
 
 /**
@@ -57,13 +59,13 @@ HangoutInjection.prototype.findHangoutButton = function(buttonName) {
  */
 HangoutInjection.prototype.renderAutoButton = function() {
   // Try to find the "Try Again" button.
-  var hangoutButton = this.findHangoutButton('Try again');
-  if (hangoutButton) {
-    var autoRetry = hangoutButton.cloneNode(true);
+  this.tryAgainButton = this.findHangoutButton('Try again');
+  if (this.tryAgainButton) {
+    var autoRetry = this.tryAgainButton.cloneNode(true);
     autoRetry.id = ':oauto';
     autoRetry.innerHTML = 'Attempt Auto-Retry?';
     autoRetry.addEventListener('click', this.onAutoRetryClick.bind(this), false);
-    hangoutButton.parentNode.appendChild(autoRetry);
+    this.tryAgainButton.parentNode.appendChild(autoRetry);
     clearTimeout(this.timeoutHandleRenderer);
   }
   else { // Retry renderer
@@ -75,7 +77,7 @@ HangoutInjection.prototype.renderAutoButton = function() {
  * Event when the hangout button was clicked. It will attempt to retry.
  */
 HangoutInjection.prototype.onAutoRetryClick = function(e) {
-  this.autoClick();
+  this.autoClick(e);
 };
 
 /**
@@ -91,28 +93,33 @@ HangoutInjection.prototype.onRetryDelayReceived = function(response) {
  * @param {HTMLElement} element the element to click.
  */
 HangoutInjection.prototype.simulateClick = function(element) {
-  var clickEvent = document.createEvent('MouseEvents');
-  clickEvent.initEvent('mousedown', true, true);
-  element.dispatchEvent(clickEvent);
-  
-  clickEvent = document.createEvent('MouseEvents')
-  clickEvent.initEvent('click', true, true);
-  element.dispatchEvent(clickEvent);
-  
-  clickEvent = document.createEvent('MouseEvents')
-  clickEvent.initEvent('mouseup', true, true);
-  element.dispatchEvent(clickEvent);
+  var dispatchEvent = function (elt, name) {
+    var clickEvent = document.createEvent('MouseEvents');
+    clickEvent.initEvent(name, true, true);
+    elt.dispatchEvent(clickEvent);
+  };
+  dispatchEvent(element, 'mouseover');
+  dispatchEvent(element, 'mousedown');
+  dispatchEvent(element, 'click');
+  dispatchEvent(element, 'mouseup');
 };
 
 /**
  * Auto click a specific div.
  */
-HangoutInjection.prototype.autoClick = function() {
-  var tryButton = document.getElementById(':oauto');
-  if (tryButton) {
-     this.simulateClick(tryButton);
-     this.timeoutHandleClick = setTimeout(this.autoClick.bind(this), this.retryTryAgainDelay);
+HangoutInjection.prototype.autoClick = function(e) {
+  if (!this.isJoining()) {
+    this.simulateClick(this.tryAgainButton);
   }
+  this.timeoutHandleClick = setTimeout(this.autoClick.bind(this), 1000);
+};
+
+/**
+ * Check if the joining text is appearing, this will stall.
+ */
+HangoutInjection.prototype.isJoining = function() {
+  var message = document.querySelector(this.hangoutMessageID);
+  return message.innerHTML == 'Joining the hangout...';
 };
 
 // Main.
